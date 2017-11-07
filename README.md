@@ -1,31 +1,25 @@
-# demo-website
-Simple website for demonstrating web development in the NGTB
+# Web App
+Web app for the NGTB for finding employees based on their area of specialty and what they can help with.
+## Technical Details
+This web app is being developed using the [MEAN stack](https://en.wikipedia.org/wiki/MEAN_(software_bundle))
 
-This website is written purely using HTML, CSS, and JavaScript. It is created for educational purposes, to demonstrate static website development in the NGTB.
+M - MongoDB  
+E - Express.js  
+A - AngularJS  
+N - Node.js  
 
-To do:
-1. Brainstorm a layout for the website
-    - [ ] Layout
-    - [ ] Font sizing and colors
-    - [ ] Break down into tags/structure
-2. Create files
-    - [ ] Organize file structure
-    - [ ] Maintain a cohesive and understandable format
-3. HTML
-    - [ ] Create HTML elements based on layout
-    - [ ] Add class and ID tags based on formatting
-4. CSS
-    - [ ] Position elements
-    - [ ] Apply formatting for classes
-    - [ ] Apply formatting for IDs
-    - [ ] Apply formatting for everything else
-    - [ ] Debugging HTML and CSS
-5. JavaScript
-    - [ ] Add basic dynamic function (buttons, hovering, user input etc.)
-    - [ ] Dynamic scaling
-6. (optional) Add web dev tool demonstration pages. Ideas:
-    - jQuery
-    - Angular
-    - Bootstrap
-    - Ruby on Rails
-    - SCSS/SASS
+The project is aiming for a deadline of the end of the year.  
+Proper documentation will be maintained and retroactively fixed for learning purposes within and outside of the NGTB  
+- [ ] Draft the web app layout  
+- [ ] Create the HTML document for the app  
+- [ ] Format the Web App with Angular
+- [ ] \(Optional) Use bootstrap to simplify formatting
+- [ ] Structure the Database  
+- [ ] Populate the database with test info  
+- [ ] Create a Node module for fetching info from the database
+- [ ] Write the Express middleware to route incoming requests 
+- [ ] Write the Express code to respond with json data from search info
+- [ ] Write the client side code to sent requests to the back-end when the User searches
+- [ ] Create an HTML/Angular module to display when a response is recieved
+- [ ] Write Angular controller to populate results
+- [ ] Deploy
