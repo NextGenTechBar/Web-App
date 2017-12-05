@@ -19,5 +19,9 @@ module.exports = {
 
     menus() {
         return _db.collection("menus");
+    },
+
+    people() {
+        return _db.collection("people");
     }
 }

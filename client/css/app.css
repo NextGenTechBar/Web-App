@@ -3,6 +3,11 @@
     align-items: center;
 }
 
+.panel-heading h1 {
+    display: inline-block;
+    width: 90%;
+}
+
 .panel-body {
     padding-top: 0;
 }
@@ -57,4 +62,24 @@ button>p {
     vertical-align: middle;
     font-size: 2.5rem;
     font-weight: bold;
+}
+
+.text-list {
+    margin: 0;
+}
+
+.back {
+    width: 3%;
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    cursor: pointer;
+}
+
+.text-larger {
+    font-size: 130%;
+    color: rgb(120, 120, 120);
+}
+
+tr:hover {
+    cursor: pointer;
 }

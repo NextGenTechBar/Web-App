@@ -7,9 +7,11 @@ var _angular2 = _interopRequireDefault(_angular);
 
 require('angular-ui-router');
 
+require('./controllers/index.js');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-_angular2.default.module('skills', ["ui.router"]).config(function ($stateProvider, $urlRouterProvider) {
+_angular2.default.module('skills', ["ui.router", "skillsControl"]).config(function ($stateProvider, $urlRouterProvider) {
     $urlRouterProvider.otherwise('/menu');
 
     $stateProvider.state('menu', {
@@ -22,7 +24,20 @@ _angular2.default.module('skills', ["ui.router"]).config(function ($stateProvide
         url: '/detail-search',
         templateUrl: 'templates/detail-search.html'
     });
-}).controller('statesController', function ($http) {
+});
+
+},{"./controllers/index.js":2,"angular":5,"angular-ui-router":3}],2:[function(require,module,exports){
+'use strict';
+
+var firstName = void 0;
+var lastName = void 0;
+var major = void 0;
+var skills = void 0;
+var homeCity = void 0;
+var homeState = void 0;
+var availableDays = void 0;
+
+angular.module('skillsControl', []).controller('statesController', function ($http) {
     var _this = this;
 
     $http.get('/states').then(function (response) {
@@ -34,20 +49,30 @@ _angular2.default.module('skills', ["ui.router"]).config(function ($stateProvide
     $http.get('/days').then(function (response) {
         _this2.days = response.data;
     });
-}).controller('interfaceController', ['$state', function ($state) {
+}).controller('interfaceController', ['$state', '$http', function ($state, $http) {
     this.searchByName = function () {
-        console.log("Searching by name...");
-        $("#main-menu").slideUp("medium", function () {
-            console.log("Hiding main menu");
-            $state.go('nameSearch').then(function () {
-                $("#name-search").hide().slideDown("slow", function () {
-                    console.log("Name search displayed");
+        firstName = $("#first-name").val();
+        lastName = $("#last-name").val();
+        console.log("Searching by name: " + firstName + " " + lastName);
+        if (firstName || lastName) {
+            $("#main-menu").slideUp("medium", function () {
+                console.log("Hiding main menu");
+                $state.go('nameSearch').then(function () {
+                    $("#name-search").hide().slideDown("slow", function () {
+                        console.log("Name search displayed");
+                    });
                 });
             });
-        });
+        }
     };
 
     this.searchByDetail = function () {
+        console.log("Searching by detail...");
+        major = $("#major").val();
+        homeCity = $("#home-city").val();
+        homeState = $("#home-state").val();
+        availableDays = $("#available-days").val();
+        skills = $("#skills").val().split(', ');
         $("#main-menu").slideUp("medium", function () {
             console.log("Hiding main menu");
             $state.go('detailSearch').then(function () {
@@ -57,9 +82,84 @@ _angular2.default.module('skills', ["ui.router"]).config(function ($stateProvide
             });
         });
     };
+}]).controller('detailsController', function ($http) {
+    $http.post('./details', {
+        "major": major,
+        "hometown": {
+            "city": homeCity,
+            "state": homeState
+        },
+        "skills": skills,
+        "days": availableDays
+    }).then(function (response) {
+        console.log("finished query");
+    });
+
+    this.results = [{
+        name: "Max",
+        major: "Computer Science",
+        matchingSkills: ["MEAN stack", "C++", "Java"],
+        daysAvailable: ["Tuesday", "Thursday", "Friday"]
+    }, {
+        name: "Ricky",
+        major: "BMIS",
+        matchingSkills: ["EasyVista", "Zach"],
+        daysAvailable: ["Tuesday", "Thursday", "Friday"]
+    }, {
+        name: "Nicole",
+        major: "Civil",
+        matchingSkills: ["Complaining", "somthing else", "lets make this list long", "push some things out"],
+        daysAvailable: ["Tuesday", "Thursday", "I only work two days a week"]
+    }];
+}).controller('nameController', function ($scope, $http) {
+    $http.get('./names', {
+        "params": {
+            "firstName": firstName,
+            "lastName": lastName
+        }
+    }).then(function (response) {
+        if (response.data) {
+            var resultName = response.data.name.first + " " + response.data.name.last;
+            $scope.results = {
+                name: resultName,
+                major: response.data.major,
+                skills: response.data.skills,
+                hometown: response.data.hometown,
+                daysAvailable: response.data.days
+            };
+        } else {
+            $scope.results = {
+                name: "Nobody found!",
+                major: null,
+                skills: null,
+                hometown: null,
+                daysAvailable: null
+            };
+            $(".panel-body").hide();
+        }
+    });
+}).controller('backController', ['$state', function ($state) {
+    this.backName = function () {
+        console.log("Returning to main menu");
+        $("#name-search").slideUp("medium", function () {
+            console.log("Name search hidden");
+            $state.go("menu").then(function () {
+                $("#main-menu").hide().slideDown("slow");
+            });
+        });
+    };
+    this.backDetail = function () {
+        console.log("Returning to main menu");
+        $("#detail-search").slideUp("medium", function () {
+            console.log("Detail search hidden");
+            $state.go("menu").then(function () {
+                $("#main-menu").hide().slideDown("slow");
+            });
+        });
+    };
 }]);
 
-},{"angular":4,"angular-ui-router":2}],2:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 /**
  * State-based routing for AngularJS
  * @version v0.4.3
@@ -4744,7 +4844,7 @@ angular.module('ui.router.state')
   .filter('isState', $IsStateFilter)
   .filter('includedByState', $IncludedByStateFilter);
 })(window, window.angular);
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 /**
  * @license AngularJS v1.6.6
  * (c) 2010-2017 Google, Inc. http://angularjs.org
@@ -38634,8 +38734,8 @@ $provide.value("$locale", {
 })(window);
 
 !window.angular.$$csp().noInlineStyle && window.angular.element(document.head).prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>');
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 require('./angular');
 module.exports = angular;
 
-},{"./angular":3}]},{},[1]);
+},{"./angular":4}]},{},[1]);
