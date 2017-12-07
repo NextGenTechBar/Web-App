@@ -12,16 +12,16 @@
                 <th>Days Available</th>
             </thead>
             <tbody ng-controller="detailsController as detailsCtrl">
-                <tr ng-repeat="result in detailsCtrl.results">
-                    <td>{{result.name}}</td>
+                <tr ng-repeat="result in results">
+                    <td>{{result.name.first + " " + result.name.last}}</td>
                     <td>{{result.major}}</td>
                     <td>
-                        <p class="text-list" ng-repeat="skill in result.matchingSkills">
+                        <p class="text-list" ng-repeat="skill in result.skills">
                             {{skill}}
                         </p>
                     </td>
                     <td>
-                        <p class="text-list" ng-repeat="day in result.daysAvailable">
+                        <p class="text-list" ng-repeat="day in result.days">
                             {{day}}
                         </p>
                     </td>

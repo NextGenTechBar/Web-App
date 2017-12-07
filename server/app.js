@@ -73,16 +73,14 @@ app.post('/details', (request, response) => {
         matchStep.major = { $regex: major, $options: 'i' };
     }
     if (hometown.state) {
-        matchStep.hometown = {};
-        matchStep.hometown.state = hometown.state;
+        matchStep["hometown.state"] = hometown.state;
     }
     if (hometown.city) {
-        if (!matchStep.hometown) matchStep.hometown = {};
-        matchStep.hometown.city = hometown.city;
+        matchStep["hometown.city"] = { $regex: hometown.city, $options: 'i' };
     }
 
     if (skills[0] != ' ' || skills.length > 1) {
-        matchStep.skills = { $in: skills };
+        matchStep.skills = { $in: skills.map(skill => new RegExp(skill, 'i')) };
     }
     if (days.length != 0) {
         matchStep.days = { $in: days };
@@ -96,11 +94,47 @@ app.post('/details', (request, response) => {
         if (err) {
             throw err;
         } else {
-            console.log(docs);
+            response.send(docs);
         }
     });
+});
 
-    response.send();
+app.post('/user-add', (request, response) => {
+    filter = {
+        "name.first": request.body.name.first,
+        "name.last": request.body.name.last
+    }
+    update = { "$addToSet": {} }
+    update["$addToSet"].skills = { $each: request.body.skills };
+    update["$addToSet"].days = { $each: request.body.days };
+    console.log(filter);
+    console.log(update);
+    mongo.people().findOneAndUpdate(filter, update, (err, result) => {
+        if (err) throw err;
+        else {
+            console.log(result);
+            response.send()
+        }
+    });
+});
+
+app.post('/user-remove', (request, response) => {
+    filter = {
+        "name.first": request.body.name.first,
+        "name.last": request.body.name.last
+    }
+    update = { "$pull": {} }
+    update["$pull"].skills = { $in: request.body.skills };
+    update["$pull"].days = { $in: request.body.days };
+    console.log(filter);
+    console.log(update);
+    mongo.people().findOneAndUpdate(filter, update, (err, result) => {
+        if (err) throw err;
+        else {
+            console.log(result);
+            response.send()
+        }
+    });
 });
 
 app.listen(8080, function() {

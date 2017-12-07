@@ -3,9 +3,27 @@
     align-items: center;
 }
 
-.panel-heading h1 {
-    display: inline-block;
-    width: 90%;
+.panel-heading {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.panel-heading>h1 {
+    align-self: flex-end;
+    display: block;
+}
+
+.panel-heading button {
+    height: 5rem;
+    width: 9rem;
+}
+
+.panel-heading>div {
+    margin: auto;
+    align-self: flex-end;
+    display: block;
 }
 
 .panel-body {
@@ -51,7 +69,7 @@ body {
     height: 2em;
 }
 
-button {
+.btn-lg {
     height: 5em;
     width: 100%;
     font-size: 12rem;

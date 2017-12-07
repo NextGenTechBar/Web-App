@@ -45,7 +45,7 @@ angular.module('skillsControl', [])
         homeCity = $("#home-city").val();
         homeState = $("#home-state").val();
         availableDays = $("#available-days").val();
-        skills = $("#skills").val().split(', ');
+        skills = $("#skills").val().split(',').map(val => val.trim());
         $("#main-menu").slideUp("medium", () => {
             console.log("Hiding main menu");
             $state.go('detailSearch').then(() => {
@@ -56,9 +56,47 @@ angular.module('skillsControl', [])
             });
         })
     }
+
+    this.add = function() {
+        firstName = $("#first-name").val();
+        lastName = $("#last-name").val();
+        console.log("Adding to " + firstName + " " + lastName);
+        skills = $("#skills").val().split(',').map(val => val.trim());
+        console.log(skills);
+        availableDays = $("#available-days").val();
+        let postRequest = {
+            "name": {
+                "first": firstName,
+                "last": lastName
+            }
+        };
+        if (skills) postRequest.skills = skills;
+        if (availableDays) postRequest.days = availableDays;
+
+        $http.post('/user-add', postRequest, () => window.location.reload);
+    }
+
+    this.remove = function() {
+        firstName = $("#first-name").val();
+        lastName = $("#last-name").val();
+        console.log("Removing from " + firstName + " " + lastName);
+        skills = $("#skills").val().split(',').map(val => val.trim());
+        console.log(skills);
+        availableDays = $("#available-days").val();
+        let postRequest = {
+            "name": {
+                "first": firstName,
+                "last": lastName
+            }
+        };
+        if (skills) postRequest.skills = skills;
+        if (availableDays) postRequest.days = availableDays;
+
+        $http.post('/user-remove', postRequest, () => window.location.reload);
+    }
 }])
 
-.controller('detailsController', function($http) {
+.controller('detailsController', function($scope, $http) {
     $http.post('./details', {
         "major": major,
         "hometown": {
@@ -68,28 +106,11 @@ angular.module('skillsControl', [])
         "skills": skills,
         "days": availableDays
     }).then(function(response) {
-        console.log("finished query");
+        console.log("finished query: ");
+        console.log(response.data);
+        $scope.results = response.data;
     })
 
-    this.results = [{
-            name: "Max",
-            major: "Computer Science",
-            matchingSkills: ["MEAN stack", "C++", "Java"],
-            daysAvailable: ["Tuesday", "Thursday", "Friday"]
-        },
-        {
-            name: "Ricky",
-            major: "BMIS",
-            matchingSkills: ["EasyVista", "Zach"],
-            daysAvailable: ["Tuesday", "Thursday", "Friday"]
-        },
-        {
-            name: "Nicole",
-            major: "Civil",
-            matchingSkills: ["Complaining", "somthing else", "lets make this list long", "push some things out"],
-            daysAvailable: ["Tuesday", "Thursday", "I only work two days a week"]
-        }
-    ];
 })
 
 .controller('nameController', function($scope, $http) {

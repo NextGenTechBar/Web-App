@@ -1,6 +1,12 @@
 <div class="panel panel-default" id="main-menu">
     <div class="panel-heading">
-        <h1 class="text-center">NGTB Skills Search</h1>
+        <div></div>
+        <h1>NGTB Skills Search</h1>
+        <div ng-controller="interfaceController as interfaceCtrl">
+            <button class="btn btn-success" ng-click="interfaceCtrl.add()">Add</button>
+            <button class="btn btn-danger" ng-click="interfaceCtrl.remove()">Remove</button>
+            <button class="btn btn-primary">Overwrite</button>
+        </div>
     </div>
     <div class="panel-body">
         <div class="row row-header">

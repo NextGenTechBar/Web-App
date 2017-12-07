@@ -72,7 +72,9 @@ angular.module('skillsControl', []).controller('statesController', function ($ht
         homeCity = $("#home-city").val();
         homeState = $("#home-state").val();
         availableDays = $("#available-days").val();
-        skills = $("#skills").val().split(', ');
+        skills = $("#skills").val().split(',').map(function (val) {
+            return val.trim();
+        });
         $("#main-menu").slideUp("medium", function () {
             console.log("Hiding main menu");
             $state.go('detailSearch').then(function () {
@@ -82,7 +84,53 @@ angular.module('skillsControl', []).controller('statesController', function ($ht
             });
         });
     };
-}]).controller('detailsController', function ($http) {
+
+    this.add = function () {
+        firstName = $("#first-name").val();
+        lastName = $("#last-name").val();
+        console.log("Adding to " + firstName + " " + lastName);
+        skills = $("#skills").val().split(',').map(function (val) {
+            return val.trim();
+        });
+        console.log(skills);
+        availableDays = $("#available-days").val();
+        var postRequest = {
+            "name": {
+                "first": firstName,
+                "last": lastName
+            }
+        };
+        if (skills) postRequest.skills = skills;
+        if (availableDays) postRequest.days = availableDays;
+
+        $http.post('/user-add', postRequest, function () {
+            return window.location.reload;
+        });
+    };
+
+    this.remove = function () {
+        firstName = $("#first-name").val();
+        lastName = $("#last-name").val();
+        console.log("Removing from " + firstName + " " + lastName);
+        skills = $("#skills").val().split(',').map(function (val) {
+            return val.trim();
+        });
+        console.log(skills);
+        availableDays = $("#available-days").val();
+        var postRequest = {
+            "name": {
+                "first": firstName,
+                "last": lastName
+            }
+        };
+        if (skills) postRequest.skills = skills;
+        if (availableDays) postRequest.days = availableDays;
+
+        $http.post('/user-remove', postRequest, function () {
+            return window.location.reload;
+        });
+    };
+}]).controller('detailsController', function ($scope, $http) {
     $http.post('./details', {
         "major": major,
         "hometown": {
@@ -92,25 +140,10 @@ angular.module('skillsControl', []).controller('statesController', function ($ht
         "skills": skills,
         "days": availableDays
     }).then(function (response) {
-        console.log("finished query");
+        console.log("finished query: ");
+        console.log(response.data);
+        $scope.results = response.data;
     });
-
-    this.results = [{
-        name: "Max",
-        major: "Computer Science",
-        matchingSkills: ["MEAN stack", "C++", "Java"],
-        daysAvailable: ["Tuesday", "Thursday", "Friday"]
-    }, {
-        name: "Ricky",
-        major: "BMIS",
-        matchingSkills: ["EasyVista", "Zach"],
-        daysAvailable: ["Tuesday", "Thursday", "Friday"]
-    }, {
-        name: "Nicole",
-        major: "Civil",
-        matchingSkills: ["Complaining", "somthing else", "lets make this list long", "push some things out"],
-        daysAvailable: ["Tuesday", "Thursday", "I only work two days a week"]
-    }];
 }).controller('nameController', function ($scope, $http) {
     $http.get('./names', {
         "params": {
