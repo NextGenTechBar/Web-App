@@ -73,7 +73,7 @@ angular.module('skillsControl', [])
         if (skills) postRequest.skills = skills;
         if (availableDays) postRequest.days = availableDays;
 
-        $http.post('/user-add', postRequest, () => window.location.reload);
+        $http.post('/user-add', postRequest).then(() => window.location.reload());
     }
 
     this.remove = function() {
@@ -81,7 +81,6 @@ angular.module('skillsControl', [])
         lastName = $("#last-name").val();
         console.log("Removing from " + firstName + " " + lastName);
         skills = $("#skills").val().split(',').map(val => val.trim());
-        console.log(skills);
         availableDays = $("#available-days").val();
         let postRequest = {
             "name": {
@@ -89,10 +88,46 @@ angular.module('skillsControl', [])
                 "last": lastName
             }
         };
-        if (skills) postRequest.skills = skills;
-        if (availableDays) postRequest.days = availableDays;
+        let infoRequest = {
+            "name": {
+                "first": firstName,
+                "last": lastName
+            },
+            "skills": skills,
+            "days": availableDays,
+            "major": major,
+            "hometown": hometown
+        };
 
-        $http.post('/user-remove', postRequest, () => window.location.reload);
+        $http.post('/user-remove', postRequest).then(() => {
+            $http.post('/user-overwrite', infoRequest).then(() => window.location.reload());
+        });
+    }
+
+    this.overwrite = function() {
+        firstName = $("#first-name").val();
+        lastName = $("#last-name").val();
+        skills = $("#skills").val().split(',').map(val => val.trim());
+        availableDays = $("#available-days").val();
+        major = $("#major").val();
+        let hometown = {
+            "city": $("#home-city").val(),
+            "state": $("#home-state").val()
+        }
+        let postRequest = {
+            "name": {
+                "first": firstName,
+                "last": lastName
+            },
+            "skills": skills,
+            "days": availableDays,
+            "major": major,
+            "hometown": hometown
+        }
+        console.log("Overwriting");
+        console.log(postRequest);
+
+        $http.post('/user-overwrite', postRequest).then(() => window.location.reload());
     }
 }])
 

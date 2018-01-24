@@ -11,8 +11,13 @@
 }
 
 .panel-heading>h1 {
-    align-self: flex-end;
-    display: block;
+    position: relative;
+    left: -4rem;
+}
+
+.panel-heading>.back {
+    position: relative;
+    left: -35rem;
 }
 
 .panel-heading button {

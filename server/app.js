@@ -112,6 +112,12 @@ app.post('/user-add', (request, response) => {
     mongo.people().findOneAndUpdate(filter, update, (err, result) => {
         if (err) throw err;
         else {
+            if (!result.value) mongo.people().insert({
+                "name": {
+                    "first": filter["name.first"],
+                    "last": filter["name.last"]
+                }
+            });
             console.log(result);
             response.send()
         }
@@ -128,6 +134,14 @@ app.post('/user-remove', (request, response) => {
     update["$pull"].days = { $in: request.body.days };
     console.log(filter);
     console.log(update);
+    console.log(request.body.days.length);
+    if (request.body.skills[0] == "" && request.body.days.length == 0) {
+        console.log(request.body.skills);
+        mongo.people().deleteOne(filter, (err, result) => {
+            if (err) throw err;
+        });
+        response.send();
+    }
     mongo.people().findOneAndUpdate(filter, update, (err, result) => {
         if (err) throw err;
         else {
@@ -136,6 +150,42 @@ app.post('/user-remove', (request, response) => {
         }
     });
 });
+
+app.post('/user-overwrite', (request, response) => {
+    filter = {
+        "name.first": request.body.name.first,
+        "name.last": request.body.name.last
+    }
+    console.log("Overwriting: ")
+    console.log(request.body);
+
+    update = { "$set": {} }
+    if (request.body.skills[0] != 0)
+        update["$set"].skills = request.body.skills;
+    if (request.body.days.length != 0)
+        update["$set"].days = request.body.days;
+    if (request.body.hometown.city)
+        update["$set"]["hometown.city"] = request.body.hometown.city;
+    if (request.body.hometown.state)
+        update["$set"]["hometown.state"] = request.body.hometown.state;
+    if (request.body.major)
+        update["$set"].major = request.body.major;
+    console.log(filter);
+    console.log(update);
+    console.log(Object.keys(update["$set"]).length);
+
+    if (Object.keys(update["$set"]).length != 0) {
+        mongo.people().findOneAndUpdate(filter, update, { "upsert": true }, (err, result) => {
+            if (err) throw err;
+            else {
+                console.log(result);
+                response.send()
+            }
+        });
+    } else {
+        response.send();
+    }
+})
 
 app.listen(8080, function() {
     console.log("Listening on port 8080");

@@ -103,8 +103,8 @@ angular.module('skillsControl', []).controller('statesController', function ($ht
         if (skills) postRequest.skills = skills;
         if (availableDays) postRequest.days = availableDays;
 
-        $http.post('/user-add', postRequest, function () {
-            return window.location.reload;
+        $http.post('/user-add', postRequest).then(function () {
+            return window.location.reload();
         });
     };
 
@@ -115,7 +115,6 @@ angular.module('skillsControl', []).controller('statesController', function ($ht
         skills = $("#skills").val().split(',').map(function (val) {
             return val.trim();
         });
-        console.log(skills);
         availableDays = $("#available-days").val();
         var postRequest = {
             "name": {
@@ -123,11 +122,51 @@ angular.module('skillsControl', []).controller('statesController', function ($ht
                 "last": lastName
             }
         };
-        if (skills) postRequest.skills = skills;
-        if (availableDays) postRequest.days = availableDays;
+        var infoRequest = {
+            "name": {
+                "first": firstName,
+                "last": lastName
+            },
+            "skills": skills,
+            "days": availableDays,
+            "major": major,
+            "hometown": hometown
+        };
 
-        $http.post('/user-remove', postRequest, function () {
-            return window.location.reload;
+        $http.post('/user-remove', postRequest).then(function () {
+            $http.post('/user-overwrite', infoRequest).then(function () {
+                return window.location.reload();
+            });
+        });
+    };
+
+    this.overwrite = function () {
+        firstName = $("#first-name").val();
+        lastName = $("#last-name").val();
+        skills = $("#skills").val().split(',').map(function (val) {
+            return val.trim();
+        });
+        availableDays = $("#available-days").val();
+        major = $("#major").val();
+        var hometown = {
+            "city": $("#home-city").val(),
+            "state": $("#home-state").val()
+        };
+        var postRequest = {
+            "name": {
+                "first": firstName,
+                "last": lastName
+            },
+            "skills": skills,
+            "days": availableDays,
+            "major": major,
+            "hometown": hometown
+        };
+        console.log("Overwriting");
+        console.log(postRequest);
+
+        $http.post('/user-overwrite', postRequest).then(function () {
+            return window.location.reload();
         });
     };
 }]).controller('detailsController', function ($scope, $http) {
