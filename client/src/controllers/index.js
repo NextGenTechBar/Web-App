@@ -8,79 +8,44 @@ let availableDays;
 
 angular.module('skillsControl', [])
 
+/*
+ * States Controller
+ * Handles populating the dropdown menu to select home state
+ */
 .controller('statesController', function($http) {
     $http.get('/states').then((response) => {
         this.states = response.data;
     })
 })
 
+/*
+ * Days Controller
+ * Handles populating the selection menu for shift days
+ */
 .controller('daysController', function($http) {
     $http.get('/days').then((response) => {
         this.days = response.data;
     })
 })
 
-.controller('interfaceController', ['$state', '$http', function($state, $http) {
-    this.searchByName = function() {
-        firstName = $("#first-name").val();
-        lastName = $("#last-name").val();
-        console.log("Searching by name: " + firstName + " " + lastName);
-        if (firstName || lastName) {
-            $("#main-menu").slideUp("medium", () => {
-                console.log("Hiding main menu");
-                $state.go('nameSearch').then(() => {
-                    $("#name-search").hide()
-                        .slideDown("slow", () => {
-                            console.log("Name search displayed");
-                        });
-                })
-
-            });
-        }
-    };
-
-    this.searchByDetail = function() {
-        console.log("Searching by detail...");
-        major = $("#major").val();
-        homeCity = $("#home-city").val();
-        homeState = $("#home-state").val();
-        availableDays = $("#available-days").val();
-        skills = $("#skills").val().split(',').map(val => val.trim());
-        $("#main-menu").slideUp("medium", () => {
-            console.log("Hiding main menu");
-            $state.go('detailSearch').then(() => {
-                $("#detail-search").hide()
-                    .slideDown("slow", () => {
-                        console.log("Detail search displayed");
-                    });
-            });
-        })
-    }
-
+/**
+ * Interface Controller
+ * 
+ */
+.controller('userManageController', ['$state', '$http', function($state, $http) {
     this.add = function() {
         firstName = $("#first-name").val();
         lastName = $("#last-name").val();
-        console.log("Adding to " + firstName + " " + lastName);
         skills = $("#skills").val().split(',').map(val => val.trim());
-        console.log(skills);
         availableDays = $("#available-days").val();
-        let postRequest = {
-            "name": {
-                "first": firstName,
-                "last": lastName
-            }
-        };
-        if (skills) postRequest.skills = skills;
-        if (availableDays) postRequest.days = availableDays;
+        major = $("#major").val();
+        let hometown = {
+            "city": $("#home-city").val(),
+            "state": $("#home-state").val()
+        }
+        console.log("Adding to " + firstName + " " + lastName);
 
-        $http.post('/user-add', postRequest).then(() => window.location.reload());
-    }
-
-    this.remove = function() {
-        firstName = $("#first-name").val();
-        lastName = $("#last-name").val();
-        console.log("Removing from " + firstName + " " + lastName);
-        skills = $("#skills").val().split(',').map(val => val.trim());
+        console.log(skills);
         availableDays = $("#available-days").val();
         let postRequest = {
             "name": {
@@ -98,11 +63,29 @@ angular.module('skillsControl', [])
             "major": major,
             "hometown": hometown
         };
+        if (skills) postRequest.skills = skills;
+        if (availableDays) postRequest.days = availableDays;
 
-        $http.post('/user-remove', postRequest).then(() => {
+        $http.post('/user-add', postRequest).then(() => {
             $http.post('/user-overwrite', infoRequest).then(() => window.location.reload());
         });
-    }
+    };
+
+    this.remove = function() {
+        firstName = $("#first-name").val();
+        lastName = $("#last-name").val();
+        console.log("Removing from " + firstName + " " + lastName);
+        skills = $("#skills").val().split(',').map(val => val.trim());
+        availableDays = $("#available-days").val();
+        let postRequest = {
+            "name": {
+                "first": firstName,
+                "last": lastName
+            }
+        };
+
+        $http.post('/user-remove', postRequest).then(() => window.location.reload());
+    };
 
     this.overwrite = function() {
         firstName = $("#first-name").val();
@@ -128,8 +111,48 @@ angular.module('skillsControl', [])
         console.log(postRequest);
 
         $http.post('/user-overwrite', postRequest).then(() => window.location.reload());
-    }
+    };
 }])
+
+.controller('mainNameController', function() {
+    this.searchByName = function() {
+        firstName = $("#first-name").val();
+        lastName = $("#last-name").val();
+        console.log("Searching by name: " + firstName + " " + lastName);
+        if (firstName || lastName) {
+            $("#main-menu").slideUp("medium", () => {
+                console.log("Hiding main menu");
+                $state.go('nameSearch').then(() => {
+                    $("#name-search").hide()
+                        .slideDown("slow", () => {
+                            console.log("Name search displayed");
+                        });
+                })
+
+            });
+        }
+    };
+})
+
+.controller('mainDetailController', function() {
+    this.searchByDetail = function() {
+        console.log("Searching by detail...");
+        major = $("#major").val();
+        homeCity = $("#home-city").val();
+        homeState = $("#home-state").val();
+        availableDays = $("#available-days").val();
+        skills = $("#skills").val().split(',').map(val => val.trim());
+        $("#main-menu").slideUp("medium", () => {
+            console.log("Hiding main menu");
+            $state.go('detailSearch').then(() => {
+                $("#detail-search").hide()
+                    .slideDown("slow", () => {
+                        console.log("Detail search displayed");
+                    });
+            });
+        })
+    };
+})
 
 .controller('detailsController', function($scope, $http) {
     $http.post('./details', {

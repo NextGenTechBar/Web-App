@@ -88,10 +88,17 @@ angular.module('skillsControl', []).controller('statesController', function ($ht
     this.add = function () {
         firstName = $("#first-name").val();
         lastName = $("#last-name").val();
-        console.log("Adding to " + firstName + " " + lastName);
         skills = $("#skills").val().split(',').map(function (val) {
             return val.trim();
         });
+        availableDays = $("#available-days").val();
+        major = $("#major").val();
+        var hometown = {
+            "city": $("#home-city").val(),
+            "state": $("#home-state").val()
+        };
+        console.log("Adding to " + firstName + " " + lastName);
+
         console.log(skills);
         availableDays = $("#available-days").val();
         var postRequest = {
@@ -122,21 +129,9 @@ angular.module('skillsControl', []).controller('statesController', function ($ht
                 "last": lastName
             }
         };
-        var infoRequest = {
-            "name": {
-                "first": firstName,
-                "last": lastName
-            },
-            "skills": skills,
-            "days": availableDays,
-            "major": major,
-            "hometown": hometown
-        };
 
         $http.post('/user-remove', postRequest).then(function () {
-            $http.post('/user-overwrite', infoRequest).then(function () {
-                return window.location.reload();
-            });
+            return window.location.reload();
         });
     };
 

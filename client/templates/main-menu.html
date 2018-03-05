@@ -2,10 +2,10 @@
     <div class="panel-heading">
         <div></div>
         <h1>NGTB Skills Search</h1>
-        <div ng-controller="interfaceController as interfaceCtrl">
-            <button class="btn btn-success" ng-click="interfaceCtrl.add()">Add</button>
-            <button class="btn btn-danger" ng-click="interfaceCtrl.remove()">Remove</button>
-            <button class="btn btn-primary" ng-click="interfaceCtrl.overwrite()">Overwrite</button>
+        <div ng-controller="userManageController as userManageCtrl">
+            <button class="btn btn-success" ng-click="userManageCtrl.add()">Add</button>
+            <button class="btn btn-danger" ng-click="userManageCtrl.remove()">Remove</button>
+            <button class="btn btn-primary" ng-click="userManageCtrl.overwrite()">Overwrite</button>
         </div>
     </div>
     <div class="panel-body">
@@ -27,8 +27,8 @@
             <div class="col-lg-4">
                 <input id="last-name" type="text " class="form-control " style="display:table-cell ">
             </div>
-            <div class="col-lg-3" ng-controller="interfaceController as interfaceCtrl">
-                <button class="btn-primary btn-lg" ng-click="interfaceCtrl.searchByName()">
+            <div class="col-lg-3" ng-controller="mainNameController as mainNameCtrl">
+                <button class="btn-primary btn-lg" ng-click="mainNameCtrl.searchByName()">
                         <p>Search by Name</p>
                 </button>
             </div>
@@ -75,8 +75,8 @@
                         <option ng-repeat="day in daysCtrl.days">{{day}}</option>
                     </select>
             </div>
-            <div class="col-lg-3" ng-controller="interfaceController as interfaceCtrl">
-                <button class="btn-primary btn-lg" ng-click="interfaceCtrl.searchByDetail()">
+            <div class="col-lg-3" ng-controller="mainDetailController as mainDetailCtrl">
+                <button class="btn-primary btn-lg" ng-click="mainDetailCtrl.searchByDetail()">
                         <p>Search</p>
                     </button>
             </div>
